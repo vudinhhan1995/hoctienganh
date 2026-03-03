@@ -1,0 +1,12 @@
+name: hoctienganh
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - nodejs=20
+  - postgresql
+  - pip
+  - pip:
+    - pip==24.0
+prefix: C:\Users\st67181\miniconda3\envs\hoctienganh
