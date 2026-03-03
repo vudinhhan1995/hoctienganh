@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  level     String   @default("beginner")
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  conversations Conversation[]
+  progress      UserProgress[]
+}
+
+model Conversation {
+  id          String   @id @default(uuid())
+  userId      String
+  topic       String
+  duration    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages Message[]
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  conversationId String
+  role           String   // 'user' or 'assistant'
+  content        String
+  audioUrl       String?
+  timestamp      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+model Lesson {
+  id          String   @id @default(uuid())
+  title       String
+  level       String
+  category    String
+  description String?
+  content     Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  progress UserProgress[]
+}
+
+model UserProgress {
+  id          String    @id @default(uuid())
+  userId      String
+  lessonId    String
+  completed   Boolean   @default(false)
+  score       Int       @default(0)
+  completedAt DateTime?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
